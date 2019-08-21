@@ -39,19 +39,23 @@ final class JobController {
             return job.script
                 .get(on: req)
                 .do({ script in
-                    if script.identifier == .vrs08,
-                        let jsonResult = job.jsonResult,
-                        let cars = try? JSONDecoder().decode([Car].self, from: jsonResult) {
+                    if script.identifier == .vrs08 {
+                        guard let data = req.http.body.data else {
+                            job.status = .empty
+                            return
+                        }
+                        job.jsonResult = data
+                        guard let cars = try? JSONDecoder().decode([Car].self, from: data) else {
+                            job.status = .errored
+                            return
+                        }
                         for car in cars {
                             _ = car.save(on: req)
                         }
-                        job.status = .succeded
-                    } else {
-                        job.status = .errored
                     }
-                    _ = job.save(on: req)
             })
         }.transform(to: .ok)
     }
+    
 
 }

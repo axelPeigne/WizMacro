@@ -40,6 +40,7 @@ enum JobStatus: String, Codable {
     case created
     case succeded
     case errored
+    case empty
 }
 
 extension JobStatus: ReflectionDecodable {
