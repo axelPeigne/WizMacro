@@ -40,6 +40,7 @@ final class JobController {
                 .get(on: req)
                 .do({ script in
                     if script.identifier == .vrs08 {
+                        print(req.http.body.data)
                         guard let data = req.http.body.data else {
                             job.status = .empty
                             return
@@ -52,6 +53,8 @@ final class JobController {
                         for car in cars {
                             _ = car.save(on: req)
                         }
+                        job.status = .succeded
+                        job.save(on: req)
                     }
             })
         }.transform(to: .ok)
