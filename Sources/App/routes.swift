@@ -2,19 +2,16 @@ import Vapor
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
-    // Basic "It works" example
-    router.get { req in
-        return "It works!"
-    }
     
-    // Basic "Hello, world!" example
-    router.get("hello") { req in
-        return "Hello, world!"
-    }
+    let jobController = JobController()
+    router.get("jobs", use: jobController.index)
+    router.post("jobs", use: jobController.create)
+    router.delete("jobs", Job.parameter, use: jobController.delete)
+    router.get("get-wating-tasks", use: jobController.getWaitingTasks)
+    
+    let scriptController = ScriptController()
+    router.get("scripts", use: scriptController.index)
+    router.post("scripts", use: scriptController.create)
+    router.get("scripts/update-data", Script.parameter, use: scriptController.updateData)
 
-    // Example of configuring a controller
-    let todoController = TodoController()
-    router.get("todos", use: todoController.index)
-    router.post("todos", use: todoController.create)
-    router.delete("todos", Todo.parameter, use: todoController.delete)
 }
