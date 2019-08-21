@@ -26,9 +26,32 @@ final class JobController {
         }.transform(to: .ok)
     }
 
-    func getWaitingTasks(_ req: Request) throws -> Future<[Job]> {
+    func getWaitingJobs(_ req: Request) throws -> Future<Job> {
         let op = FilterOperator<SQLiteDatabase, Job>.make(\Job.status, .equal, [.created])
-        return Job.query(on: req).filter(op).all()
+        return Job.query(on: req)
+            .filter(op)
+            .first()
+            .unwrap(or: Abort(.notFound))
+    }
+    
+    func finishedJob(_ req: Request) throws -> Future<HTTPStatus> {
+        return try req.parameters.next(Job.self).flatMap { job in
+            return job.script
+                .get(on: req)
+                .do({ script in
+                    if script.identifier == .vrs08,
+                        let jsonResult = job.jsonResult,
+                        let cars = try? JSONDecoder().decode([Car].self, from: jsonResult) {
+                        for car in cars {
+                            _ = car.save(on: req)
+                        }
+                        job.status = .succeded
+                    } else {
+                        job.status = .errored
+                    }
+                    _ = job.save(on: req)
+            })
+        }.transform(to: .ok)
     }
 
 }
