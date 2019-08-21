@@ -71,3 +71,15 @@ final class JobController {
     
 
 }
+
+extension NSError: Debuggable {
+    public var identifier: String {
+        return "NSError"
+    }
+    
+    public var reason: String {
+        return localizedDescription
+    }
+    
+    
+}
