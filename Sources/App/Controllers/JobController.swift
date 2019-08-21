@@ -40,7 +40,9 @@ final class JobController {
                 .get(on: req)
                 .do({ script in
                     if script.identifier == .vrs08 {
-                        print(req.http.body.data)
+                        if let logger = try? req.make(Logger.self) {
+                            logger.info(req.http.body.data)
+                        }
                         guard let data = req.http.body.data else {
                             job.status = .empty
                             return
