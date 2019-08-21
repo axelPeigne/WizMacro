@@ -20,7 +20,7 @@ final class Car: SQLiteModel {
     var color: String?
     var maker: String?
     var model: String?
-    var checkinDate: Date?
+    var checkinDate: String?
     var station: Station?
     var status: Status?
     var owner: String?
