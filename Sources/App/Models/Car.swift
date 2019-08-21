@@ -23,7 +23,7 @@ final class Car: SQLiteModel {
     var checkinDate: Date?
     var station: Station?
     var status: Status?
-    var owner: Station?
+    var owner: String?
     
 }
 
