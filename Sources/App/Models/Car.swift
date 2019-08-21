@@ -31,7 +31,7 @@ typealias LicencePlate = String
 typealias Status = String
 
 enum Station: String, Codable {
-    case N0G, N8U, J16
+    case N0G, N8U, J16, Z48E, J09
 }
 
 extension Station: ReflectionDecodable {
