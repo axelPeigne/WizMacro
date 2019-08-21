@@ -8,6 +8,9 @@
 import FluentSQLite
 import Vapor
 
+// Stratégie :
+// Pour le moment cette classe est relativement stupide, elle ne fait aucune validation ni recoupement par rapport à d'autres BDD (stations, statuts, etc...).
+// A terme, l'idée est d'avoir un Model très fortement Typé avec des validations fortes. Le décodage des données devrait donc se faire plutôt en passant par un autre struct (type CarData) moins fortement Typé qui serait ensuite en charge de faire la conversion vers la classe Model.
 final class Car: SQLiteModel {
     
     static let createdAtKey: TimestampKey? = \.createdAt

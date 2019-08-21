@@ -38,13 +38,6 @@ final class JobController {
         return try req.parameters.next(Job.self).flatMap { job in
             return job.script
                 .get(on: req)
-//                .flatMap({ script -> EventLoopFuture<Job> in
-//                    return try req.content.decode(Car.self).flatMap { car in
-//                        _ = car.save(on: req)
-//                        job.status = .succeded
-//                        return job.save(on: req)
-//                    }
-//                })
                 .do({ script in
                     if script.identifier == .vrs08 {
                         guard let data = req.http.body.data else {
