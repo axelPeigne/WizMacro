@@ -61,10 +61,13 @@ final class JobController {
                                         if let logger = try? req.make(Logger.self) {
                                             logger.info("saving car with plate: \(licence)")
                                         }
-                                        if let car = car,
-                                            (try? carData.update(car: car)) != nil {
-                                            if let logger = try? req.make(Logger.self) {
-                                                logger.info("saving car2 with plate: \(licence)")
+                                        if let car = car {
+                                            do {
+                                                try carData.update(car: car)
+                                            } catch {
+                                                if let logger = try? req.make(Logger.self) {
+                                                    logger.info(error.localizedDescription)
+                                                }
                                             }
 
                                             _ = car.save(on: req)
