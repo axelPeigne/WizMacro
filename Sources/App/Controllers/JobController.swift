@@ -45,15 +45,32 @@ final class JobController {
                             return
                         }
                         job.jsonResult = data
-                        guard let cars = try? JSONDecoder().decode([Car].self, from: data) else {
+                        guard let carsData = try? JSONDecoder().decode([CarData].self, from: data) else {
                             if let logger = try? req.make(Logger.self) {
                                 logger.info("wrong data")
                             }
                             job.status = .errored
                             return
                         }
-                        for car in cars {
-                            _ = car.save(on: req)
+                        for var carData in carsData {
+                            if let licence = carData.licencePlate {
+                                Car.query(on: req)
+                                    .filter(\Car.licence, .equal, licence)
+                                    .first()
+                                    .do { car in
+                                        if let car = car,
+                                            (try? carData.update(car: car)) != nil {
+                                            _ = car.save(on: req)
+                                        }
+                                }
+                            } else if let car = try? carData.toCar() {
+                                _ = car.save(on: req)
+                            } else {
+                                if let logger = try? req.make(Logger.self) {
+                                    logger.info("Can't save car with licence: \(carData.licence ?? "No plate")")
+                                }
+                            }
+                            
                         }
                         job.status = .succeded
                         _ = job.save(on: req)
@@ -65,14 +82,3 @@ final class JobController {
 
 }
 
-extension NSError: Debuggable {
-    public var identifier: String {
-        return "NSError"
-    }
-    
-    public var reason: String {
-        return localizedDescription
-    }
-    
-    
-}
