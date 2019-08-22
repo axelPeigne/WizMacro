@@ -68,7 +68,7 @@ struct CarData: Codable {
         self.maker = maker?.trimmingCharacters(in: characterSet)
         self.model = model?.trimmingCharacters(in: characterSet)
         self.checkinDate = model?.trimmingCharacters(in: characterSet)
-        self.station = status?.trimmingCharacters(in: characterSet)
+        self.station = station?.trimmingCharacters(in: characterSet)
         self.status = status?.trimmingCharacters(in: characterSet)
         self.owner = owner?.trimmingCharacters(in: characterSet)
     }
