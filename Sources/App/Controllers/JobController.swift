@@ -58,8 +58,15 @@ final class JobController {
                                     .filter(\Car.licence, .equal, licence)
                                     .first()
                                     .do { car in
+                                        if let logger = try? req.make(Logger.self) {
+                                            logger.info("saving car with plate: \(licence)")
+                                        }
                                         if let car = car,
                                             (try? carData.update(car: car)) != nil {
+                                            if let logger = try? req.make(Logger.self) {
+                                                logger.info("saving car2 with plate: \(licence)")
+                                            }
+
                                             _ = car.save(on: req)
                                         }
                                 }
