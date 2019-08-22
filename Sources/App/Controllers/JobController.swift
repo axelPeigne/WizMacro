@@ -71,10 +71,14 @@ final class JobController {
                                             }
 
                                             _ = car.save(on: req)
+                                        } else if let car = try? carData.toCar() {
+                                            _ = car.save(on: req)
+                                        } else {
+                                            if let logger = try? req.make(Logger.self) {
+                                                logger.info("Can't save car with licence: \(carData.licence ?? "No plate")")
+                                            }
                                         }
                                 }
-                            } else if let car = try? carData.toCar() {
-                                _ = car.save(on: req)
                             } else {
                                 if let logger = try? req.make(Logger.self) {
                                     logger.info("Can't save car with licence: \(carData.licence ?? "No plate")")
