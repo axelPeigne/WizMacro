@@ -53,7 +53,7 @@ final class JobController {
                             return
                         }
                         for var carData in carsData {
-                            if let licence = carData.licencePlate {
+                            if let licence = carData.licence {
                                 Car.query(on: req)
                                     .filter(\Car.licence, .equal, licence)
                                     .first()

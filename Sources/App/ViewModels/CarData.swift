@@ -9,10 +9,6 @@ import Foundation
 
 struct CarData: Codable {
     
-    enum CarDataErrors: Error {
-        case cantCreateLicencePlate
-    }
-    
     var licence: String?
     var color: String?
     var maker: String?
@@ -21,15 +17,6 @@ struct CarData: Codable {
     var station: String?
     var status: String?
     var owner: String?
-    
-    var licencePlate: LicencePlate? {
-        if let licence = licence,
-            let licencePlate = LicencePlate(value: licence) {
-            return licencePlate
-        } else {
-            return nil
-        }
-    }
     
     var carStatus: CarStatus {
         if let status = status,
@@ -43,11 +30,11 @@ struct CarData: Codable {
     mutating func toCar() throws -> Car {
         self.trimAll()
         
-        guard let licencePlate = self.licencePlate else {
-            throw CarDataErrors.cantCreateLicencePlate
+        guard let licence = licence else {
+            throw WizMacroError.noLicencePlateSupplied
         }
-        
-        let car = Car(licence: licencePlate, status: carStatus)
+
+        let car = Car(licence: licence, status: carStatus)
         
         do {
             try self.update(car: car)
@@ -59,17 +46,19 @@ struct CarData: Codable {
     mutating func update(car: Car) throws {
         self.trimAll()
         
-        guard let licencePlate = self.licencePlate else {
-            throw CarDataErrors.cantCreateLicencePlate
+        guard let licence = licence else {
+            throw WizMacroError.noLicencePlateSupplied
         }
-        
-        car.licence = licencePlate
+
+        car.licence = licence
         car.status = carStatus
         car.color = color
         car.maker = maker
         car.model = model
         car.station = station
         car.owner = owner
+        
+        try car.validate()
     }
     
     mutating func trimAll() {

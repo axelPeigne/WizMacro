@@ -25,8 +25,8 @@ final class LicencePlateTests: XCTestCase {
         ]
         
         for value in correctValues {
-            let licencePlate = LicencePlate(value: value)
-            assert(licencePlate != nil)
+            let car = Car(licence: value, status: .OnHand)
+            XCTAssertNoThrow(try car.validate())
         }
         
         let incorrectValues = [
@@ -39,8 +39,8 @@ final class LicencePlateTests: XCTestCase {
         ]
         
         for value in incorrectValues {
-            let licencePlate = LicencePlate(value: value)
-            assert(licencePlate == nil)
+            let car = Car(licence: value, status: .OnHand)
+            XCTAssertThrowsError(try car.validate())
         }
     }
 

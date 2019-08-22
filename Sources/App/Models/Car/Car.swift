@@ -20,7 +20,7 @@ final class Car: SQLiteModel {
     var id: Int?
     var createdAt: Date?
     var updatedAt: Date?
-    var licence: LicencePlate
+    var licence: String
     var status: CarStatus
     var color: String?
     var maker: String?
@@ -31,7 +31,7 @@ final class Car: SQLiteModel {
     
     init(
         id: Int? = nil,
-        licence: LicencePlate,
+        licence: String,
         status: CarStatus
         ) {
         self.id = id
@@ -41,34 +41,17 @@ final class Car: SQLiteModel {
     
 }
 
-struct LicencePlate: Codable {
-    
-    public var value: String
-    
-    init?(value: String) {
-        if LicencePlate.validate(value: value) {
-            self.value = value
-        } else {
-            return nil
-        }
-    }
-    
-    static func validate(value: String) -> Bool {
-        return value.range(of: "^[A-z]{2}-?[0-9]{3}-?[A-z]{2}$", options: .regularExpression) != nil
-    }
-}
-
-enum CarStatus: String, Codable {
-    case OnMove = "OM"
-    case OnHand = "OH"
-    case Overdue = "OVDU"
-    case Disp = "DISP"
-    case Error
-}
-
-extension CarStatus: ReflectionDecodable {
-    static func reflectDecoded() throws -> (CarStatus, CarStatus) {
-        return (.OnMove, .OnHand)
+extension Car: Validatable {
+    static func validations() throws -> Validations<Car> {
+        var validations = Validations(Car.self)
+        
+        try validations.add("Licence plate is correct", { car in
+            guard car.licence.range(of: Regex.isLicencePlate, options: .regularExpression) != nil else {
+                throw WizMacroError.invalidLicencePlate
+            }
+        })
+        
+        return validations
     }
 }
 
